@@ -14,8 +14,8 @@ const newSession = () =>
   typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : Math.random().toString(36).slice(2) + Date.now().toString(36);
 
 /**
- * The restaurant name field. While you type, it looks the name up on Google Maps
- * and lists matching places in Portugal; picking one fills in the rest of the form.
+ * The restaurant name field. While you type, it looks the name up (OpenStreetMap, or Google
+ * Maps when a key is set) and lists matching places in Portugal; picking one fills in the rest.
  * If the search isn't set up or fails, it behaves like a normal text field.
  */
 export function NameSearch({ id, value, onChange, onPick }: Props) {
@@ -24,6 +24,7 @@ export function NameSearch({ id, value, onChange, onPick }: Props) {
   const [active, setActive] = useState(-1);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
+  const [from, setFrom] = useState<"google" | "osm">("osm");
   const enabled = useRef<boolean | null>(null); // null = not known yet
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const latest = useRef(0);
@@ -43,6 +44,7 @@ export function NameSearch({ id, value, onChange, onPick }: Props) {
         if (n !== latest.current) return; // a newer search has started
         if (data.enabled === false) { enabled.current = false; setOpen(false); return; }
         enabled.current = true;
+        if (data.source) setFrom(data.source);
         setSuggestions(data.suggestions || []);
         setActive(-1);
         setOpen(true);
@@ -65,7 +67,7 @@ export function NameSearch({ id, value, onChange, onPick }: Props) {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
       onPick(data as PlaceDetails);
-      setMessage("Filled in from Google Maps. Check the details before saving.");
+      setMessage(`Filled in from ${from === "google" ? "Google Maps" : "OpenStreetMap"}. Check the details before saving.`);
     } catch {
       setMessage("Couldn't get that restaurant's details. You can type them yourself.");
     } finally {
@@ -131,7 +133,7 @@ export function NameSearch({ id, value, onChange, onPick }: Props) {
           )}
           <p className="s-foot">
             {suggestions.length > 0 ? "Not in the list? Keep typing, or fill in the details yourself." : ""}
-            <span className="s-attrib">Results from Google Maps</span>
+            <span className="s-attrib">{from === "google" ? "Results from Google Maps" : "Results © OpenStreetMap contributors"}</span>
           </p>
         </div>
       )}

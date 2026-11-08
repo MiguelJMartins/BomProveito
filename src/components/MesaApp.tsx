@@ -17,7 +17,7 @@ type Tab = ListStatus | "map";
 /** Ask the server where a typed-in restaurant is, so it can go on the map. */
 async function findLocation(r: Pick<Restaurant, "name" | "address">): Promise<{ lat: number; lng: number } | null> {
   try {
-    const res = await fetch(`/api/places/locate?q=${encodeURIComponent(`${r.name}, ${r.address}`)}`);
+    const res = await fetch(`/api/places/locate?name=${encodeURIComponent(r.name)}&address=${encodeURIComponent(r.address)}`);
     const data = await res.json();
     return data.location ?? null;
   } catch {

@@ -105,7 +105,8 @@ export async function details(placeId: string, sessionToken: string): Promise<Pl
 }
 
 /** Where a restaurant you typed in yourself is, so it can go on the map. */
-export async function locate(text: string): Promise<{ lat: number; lng: number } | null> {
+export async function locate(name: string, address: string): Promise<{ lat: number; lng: number } | null> {
+  const text = `${name}, ${address}`;
   const data = await call(`${API}/places:searchText`, {
     method: "POST",
     headers: headers("places.location"),
