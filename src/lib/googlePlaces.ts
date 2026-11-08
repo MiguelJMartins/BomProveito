@@ -71,11 +71,17 @@ const PRICE: Record<string, number> = {
 const GENERIC_TYPES = new Set(["restaurant", "food", "point_of_interest", "establishment", "store"]);
 
 type Component = { longText: string; shortText: string; types: string[] };
+type LatLng = { latitude: number; longitude: number };
+
+const cleanAddress = (a: string) => a.replace(/,?\s*Portugal$/, "").trim();
 
 /** The details used to fill in the form. One call per restaurant picked. */
 export async function details(placeId: string, sessionToken: string): Promise<PlaceDetails> {
   if (!/^[A-Za-z0-9_-]{10,300}$/.test(placeId)) throw new PlacesError(400, "Invalid place id");
-  const fields = ["id", "displayName", "addressComponents", "primaryType", "primaryTypeDisplayName", "priceLevel", "googleMapsUri"].join(",");
+  const fields = [
+    "id", "displayName", "formattedAddress", "addressComponents", "location",
+    "primaryType", "primaryTypeDisplayName", "priceLevel", "googleMapsUri",
+  ].join(",");
   const p = await call(`${API}/places/${placeId}?languageCode=pt-PT&regionCode=pt&sessionToken=${encodeURIComponent(sessionToken)}`, {
     headers: headers(fields),
   });
@@ -84,16 +90,27 @@ export async function details(placeId: string, sessionToken: string): Promise<Pl
     for (const t of types) { const c = comps.find((c) => c.types.includes(t)); if (c) return c.longText; }
     return "";
   };
-  const town = find("locality", "postal_town", "administrative_area_level_2");
-  let area = find("neighborhood", "sublocality_level_1", "sublocality", "administrative_area_level_3");
-  if (area === town) area = "";
+  const loc: LatLng | undefined = p.location;
   return {
     placeId: p.id || placeId,
     name: p.displayName?.text || "",
-    town,
-    area,
+    address: cleanAddress(p.formattedAddress || ""),
+    town: find("locality", "postal_town", "administrative_area_level_2"),
     cuisine: p.primaryType && !GENERIC_TYPES.has(p.primaryType) ? p.primaryTypeDisplayName?.text || "" : "",
     price: PRICE[p.priceLevel as string] || 0,
     mapsUrl: p.googleMapsUri || "",
+    lat: loc?.latitude,
+    lng: loc?.longitude,
   };
+}
+
+/** Where a restaurant you typed in yourself is, so it can go on the map. */
+export async function locate(text: string): Promise<{ lat: number; lng: number } | null> {
+  const data = await call(`${API}/places:searchText`, {
+    method: "POST",
+    headers: headers("places.location"),
+    body: JSON.stringify({ textQuery: text, languageCode: "pt-PT", regionCode: "pt", pageSize: 1 }),
+  });
+  const loc: LatLng | undefined = data.places?.[0]?.location;
+  return loc ? { lat: loc.latitude, lng: loc.longitude } : null;
 }

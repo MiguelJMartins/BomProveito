@@ -5,8 +5,10 @@ A small app for keeping your own lists of restaurants in Portugal:
 - **Wish list**: places you want to try
 - **Been there**: places you've eaten at, with a 1–5 star rating, visit date and notes
 
-You add restaurants yourself (name, town, neighbourhood, type of food, price),
-then search and filter your lists by town. Every place has a link that opens it in Google Maps.
+You add restaurants yourself (name, address, type of food, price), then search and
+filter your lists by town. Every place has a link that opens it in Google Maps, and the
+**Map** tab shows all your restaurants as pins (orange for the wish list, green for
+places you've been). Map tiles come from [OpenStreetMap](https://www.openstreetmap.org/copyright).
 
 Lists are saved in each person's browser, so anyone who opens the app gets their
 own private lists with no sign-up. (They don't sync between devices yet.)
@@ -14,8 +16,9 @@ own private lists with no sign-up. (They don't sync between devices yet.)
 ## Restaurant search (Google Maps)
 
 When you type a restaurant's name in the add form, the app suggests matching places
-in Portugal from Google Maps. Picking one fills in the town, neighbourhood, type of
-food and price. This needs a Google Places API key:
+in Portugal from Google Maps. Picking one fills in the address, type of food, price
+and its position on the map. For places you type in yourself, the same key is used to
+find the address on the map. This needs a Google Places API key:
 
 1. In [Google Cloud Console](https://console.cloud.google.com), create a project and turn on billing.
 2. Enable **Places API (New)**.
@@ -51,6 +54,7 @@ GitHub repository, then "Import Project" on Vercel. It's free for personal proje
 | `src/components/RestaurantCard.tsx` | One restaurant in the list: rating, notes, move, edit, delete |
 | `src/components/RestaurantForm.tsx` | The add / edit form |
 | `src/lib/useLists.ts` | Saving and loading your lists (browser storage) |
+| `src/components/MapView.tsx` | The map of your restaurants (Leaflet + OpenStreetMap) |
 | `src/components/NameSearch.tsx` | The name field that searches Google Maps as you type |
 | `src/lib/googlePlaces.ts` | Talks to Google Places from the server (keeps the key secret) |
 | `src/app/api/places/` | The app's search and details endpoints |

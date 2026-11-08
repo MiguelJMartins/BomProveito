@@ -1,6 +1,6 @@
 "use client";
 import { useCallback, useSyncExternalStore } from "react";
-import type { ListStatus, Restaurant, RestaurantInput } from "./types";
+import { townFromAddress, type ListStatus, type Restaurant, type RestaurantInput } from "./types";
 
 /**
  * Your restaurants and which list each one is on.
@@ -18,8 +18,25 @@ type Items = Record<string, Restaurant>;
 let cache: Items | null = null;
 const listeners = new Set<() => void>();
 
+/** Restaurants saved before the address field existed had a town and a neighbourhood instead. */
+type Stored = Partial<Restaurant> & { area?: string };
+function upgrade(r: Stored): Restaurant {
+  const { area, ...rest } = r;
+  const address = r.address ?? [area, r.town].filter(Boolean).join(", ");
+  return {
+    name: "", cuisine: "", price: 0, status: "want", rating: 0, note: "", visited: "", addedAt: 0,
+    ...rest,
+    id: r.id || "",
+    address,
+    town: r.town || townFromAddress(address),
+  } as Restaurant;
+}
+
 function load(): Items {
-  try { return JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch { return {}; }
+  try {
+    const raw: Record<string, Stored> = JSON.parse(localStorage.getItem(KEY) || "{}") || {};
+    return Object.fromEntries(Object.entries(raw).map(([id, r]) => [id, upgrade({ ...r, id })]));
+  } catch { return {}; }
 }
 function getSnapshot(): Items {
   if (cache === null) cache = load();

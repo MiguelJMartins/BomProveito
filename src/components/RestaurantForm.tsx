@@ -1,9 +1,8 @@
 "use client";
 import { useState } from "react";
-import type { ListStatus, PlaceDetails, RestaurantInput } from "@/lib/types";
+import { townFromAddress, type ListStatus, type PlaceDetails, type RestaurantInput } from "@/lib/types";
 import { NameSearch } from "./NameSearch";
 
-const TOWNS = ["Lisboa", "Porto", "Braga", "Coimbra", "Faro", "Aveiro", "Évora", "Sintra", "Cascais", "Matosinhos", "Guimarães", "Funchal"];
 const TYPES = ["Tasca", "Marisqueira", "Churrasqueira", "Petiscos", "Pastelaria", "Café", "Cervejaria", "Francesinha", "Pizza", "Sushi", "Vegetarian", "Fine dining"];
 
 type Props = {
@@ -16,7 +15,7 @@ type Props = {
 
 export function RestaurantForm({ initial, defaultStatus, submitLabel, onSave, onCancel }: Props) {
   const [v, setV] = useState<RestaurantInput>({
-    name: "", town: "", area: "", cuisine: "", price: 0, note: "", status: defaultStatus, ...initial,
+    name: "", address: "", town: "", cuisine: "", price: 0, note: "", status: defaultStatus, ...initial,
   });
   const set = <K extends keyof RestaurantInput>(k: K, val: RestaurantInput[K]) => setV((p) => ({ ...p, [k]: val }));
   const editing = !!initial?.name;
@@ -27,8 +26,11 @@ export function RestaurantForm({ initial, defaultStatus, submitLabel, onSave, on
       className="form"
       onSubmit={(e) => {
         e.preventDefault();
-        if (!v.name.trim() || !v.town.trim()) return;
-        onSave({ ...v, name: v.name.trim(), town: v.town.trim(), area: v.area.trim(), cuisine: v.cuisine.trim(), note: v.note.trim() });
+        const address = v.address.trim();
+        if (!v.name.trim() || !address) return;
+        // A picked Google place knows its town; for a typed address, take it from the address.
+        const town = (v.placeId && v.town) || townFromAddress(address);
+        onSave({ ...v, name: v.name.trim(), address, town, cuisine: v.cuisine.trim(), note: v.note.trim() });
       }}
     >
       <label className="full">
@@ -39,29 +41,36 @@ export function RestaurantForm({ initial, defaultStatus, submitLabel, onSave, on
           <NameSearch
             id={`${idp}-name`}
             value={v.name}
-            onChange={(name) => setV((p) => ({ ...p, name, placeId: undefined, mapsUrl: undefined }))}
+            onChange={(name) => setV((p) => ({ ...p, name, placeId: undefined, mapsUrl: undefined, lat: undefined, lng: undefined }))}
             onPick={(d: PlaceDetails) =>
               setV((p) => ({
                 ...p,
                 name: d.name || p.name,
-                town: d.town || p.town,
-                area: d.area,
+                address: d.address || p.address,
+                town: d.town,
                 cuisine: d.cuisine || p.cuisine,
                 price: d.price || p.price,
                 placeId: d.placeId,
                 mapsUrl: d.mapsUrl || undefined,
+                lat: d.lat,
+                lng: d.lng,
               }))
             }
           />
         )}
       </label>
-      <label>
-        Town
-        <input id={`${idp}-town`} required maxLength={40} list="towns" value={v.town} onChange={(e) => set("town", e.target.value)} placeholder="e.g. Lisboa" />
-      </label>
-      <label>
-        <span>Neighbourhood <span className="opt">optional</span></span>
-        <input id={`${idp}-area`} maxLength={40} value={v.area} onChange={(e) => set("area", e.target.value)} placeholder="e.g. Alfama" />
+      <label className="full">
+        Address
+        <input
+          id={`${idp}-address`}
+          required
+          maxLength={160}
+          autoComplete="off"
+          value={v.address}
+          // A new address means the old map position and Google link no longer apply.
+          onChange={(e) => setV((p) => ({ ...p, address: e.target.value, town: "", placeId: undefined, mapsUrl: undefined, lat: undefined, lng: undefined }))}
+          placeholder="e.g. Rua das Flores 12, Lisboa"
+        />
       </label>
       <label>
         <span>Type of food <span className="opt">optional</span></span>
@@ -95,7 +104,6 @@ export function RestaurantForm({ initial, defaultStatus, submitLabel, onSave, on
         <button type="button" className="btn quiet" onClick={onCancel}>Cancel</button>
       </div>
 
-      <datalist id="towns">{TOWNS.map((t) => <option key={t} value={t} />)}</datalist>
       <datalist id="types">{TYPES.map((t) => <option key={t} value={t} />)}</datalist>
     </form>
   );

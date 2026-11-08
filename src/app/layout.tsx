@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from "next";
 import "@fontsource/playfair-display/latin-700.css";
 import "@fontsource/atkinson-hyperlegible/latin-400.css";
 import "@fontsource/atkinson-hyperlegible/latin-700.css";
+import "leaflet/dist/leaflet.css";
 import "./globals.css";
 
 export const metadata: Metadata = {

@@ -62,7 +62,7 @@ h1 { font-family: var(--display); font-weight: 700; font-size: 2.5rem; line-heig
 
 .tabs { position: sticky; top: 0; z-index: 5; background: var(--bg); border-bottom: 1px solid var(--line); }
 .tabs .wrap { display: flex; gap: 4px; }
-.tab { flex: 1; background: none; border: 0; border-bottom: 3px solid transparent; padding: 14px 4px 11px; font: 700 1rem var(--body); color: var(--muted); }
+.tab { flex: 1; background: none; border: 0; border-bottom: 3px solid transparent; padding: 14px 4px 11px; font: 700 1rem var(--body); color: var(--muted); white-space: nowrap; }
 .tab[aria-selected="true"] { color: var(--accent); border-bottom-color: var(--accent); }
 .tab .n { color: var(--accent); font-weight: 400; font-variant-numeric: tabular-nums; margin-left: 4px; padding: 0 7px; border-radius: 99px; background: var(--accent-soft); font-size: .85rem; }
 
@@ -155,10 +155,44 @@ h1 { font-family: var(--display); font-weight: 700; font-size: 2.5rem; line-heig
 .s-attrib { margin-left: auto; }
 .s-msg { margin: 6px 0 0; font-size: .82rem; color: var(--muted); }
 
+/* Map */
+.mapview { display: flex; flex-direction: column; gap: 12px; }
+.mapbox { height: min(65vh, 560px); min-height: 320px; width: 100%; border: 3px solid var(--accent); border-radius: 12px; overflow: hidden; background: var(--accent-soft); z-index: 0; font-family: var(--body); }
+.mapbox-loading { display: grid; place-items: center; color: var(--muted); }
+.mapbox .leaflet-tile-pane { filter: saturate(.75); }
+.chip .n { font-variant-numeric: tabular-nums; opacity: .8; margin-left: 2px; }
+.chip.chip-want[aria-pressed="true"] { background: var(--want-soft); border-color: var(--want); color: var(--want); }
+.chip.chip-been[aria-pressed="true"] { background: var(--been-soft); border-color: var(--been); color: var(--been); }
+.chip[aria-pressed="false"] .dot { opacity: .35; }
+.dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 4px; vertical-align: 0; border: 2px solid var(--surface); box-shadow: 0 0 0 1px var(--accent); }
+.dot-want { background: var(--want); }
+.dot-been { background: var(--been); }
+.unmapped { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; justify-content: space-between; padding: 12px 14px; border: 2px solid var(--line); border-radius: 12px; background: var(--surface); font-size: .9rem; color: var(--muted); }
+.unmapped p { margin: 0; flex: 1 1 260px; min-width: 0; }
+.unmapped b { color: var(--fg); }
+.btn:disabled { opacity: .6; cursor: progress; }
+
+/* Map pins: a teardrop with a white glaze ring and a cobalt outline, like a painted tile dot */
+.pin { display: block; width: 26px; height: 26px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); border: 3px solid #fff; box-shadow: 0 0 0 2px var(--accent), 0 4px 8px rgba(15, 42, 102, .35); margin: 2px 0 0 0; }
+.pin-want { background: var(--want); }
+.pin-been { background: var(--been); }
+.leaflet-popup-content-wrapper { border-radius: 10px; border: 2px solid var(--accent); box-shadow: 0 8px 22px rgba(15, 42, 102, .25); }
+.leaflet-popup-tip { background: var(--surface); box-shadow: 0 0 0 2px var(--accent); }
+.leaflet-popup-content { margin: 12px 14px; font: 14px/1.4 var(--body); color: var(--fg); }
+.pop { display: flex; flex-direction: column; gap: 3px; }
+.pop-tag { align-self: flex-start; font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; padding: 1px 8px; border-radius: 99px; }
+.pop-want { background: var(--want-soft); color: var(--want); }
+.pop-been { background: var(--been-soft); color: var(--been); }
+.pop-name { font-family: var(--display); font-size: 1.05rem; color: var(--accent); }
+.pop-meta, .pop-addr { color: var(--muted); font-size: .85rem; }
+.pop a { color: var(--accent); font-weight: 700; margin-top: 4px; }
+
 .toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--fg); color: var(--bg); padding: 9px 16px; border-radius: 10px; font-size: .9rem; z-index: 20; max-width: calc(100% - 32px); }
 
 @media (max-width: 480px) {
   .form { grid-template-columns: 1fr; }
+  .tab { font-size: .92rem; }
+  .tab .n { margin-left: 2px; padding: 0 6px; }
   h1 { font-size: clamp(1.4rem, 7vw, 1.8rem); letter-spacing: .05em; }
   .band .wrap { padding-block: 28px 26px; }
   .plaque { padding: 16px 14px; }
