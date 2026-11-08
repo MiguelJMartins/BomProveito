@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96">
+  <rect width="96" height="96" fill="#fbfcff"/>
+  <g fill="#1b4aa8">
+    <!-- corner rosettes: four quarters join into a full rosette where tiles meet -->
+    <g id="c">
+      <!-- a quarter of a rosette: one diagonal petal, two half-leaves, centre quarter -->
+      <path d="M6 6 C10 18 20 22 30 30 C22 20 18 10 6 6Z"/>
+      <path d="M9 0 C13 5 20 6 26 4 C20 2 14 0 9 0Z M0 9 C5 13 6 20 4 26 C2 20 0 14 0 9Z" fill="#4f7fd6"/>
+      <circle cx="0" cy="0" r="11"/>
+      <circle cx="0" cy="0" r="7" fill="#fbfcff"/>
+      <circle cx="0" cy="0" r="4"/>
+      <circle cx="21" cy="21" r="2.4" fill="#fbfcff"/>
+    </g>
+    <use href="#c" transform="translate(96 0) scale(-1 1)"/>
+    <use href="#c" transform="translate(0 96) scale(1 -1)"/>
+    <use href="#c" transform="translate(96 96) scale(-1 -1)"/>
+    <!-- central flower -->
+    <g transform="translate(48 48)">
+      <g id="p"><path d="M0 -8 C10 -16 8 -28 0 -34 C-8 -28 -10 -16 0 -8Z"/><circle cx="0" cy="-23" r="3" fill="#fbfcff"/></g>
+      <use href="#p" transform="rotate(90)"/><use href="#p" transform="rotate(180)"/><use href="#p" transform="rotate(270)"/>
+      <g id="d"><path d="M0 -10 L5 -19 L0 -26 L-5 -19Z" transform="rotate(45)" fill="#4f7fd6"/></g>
+      <use href="#d" transform="rotate(90)"/><use href="#d" transform="rotate(180)"/><use href="#d" transform="rotate(270)"/>
+      <circle r="8"/><circle r="4.5" fill="#fbfcff"/><circle r="2"/>
+    </g>
+    <!-- edge half-medallions -->
+    <path d="M48 0 a7 7 0 0 1 -7 0 a7 7 0 0 0 14 0Z M48 96 a7 7 0 0 0 -7 0 a7 7 0 0 1 14 0Z" fill="#4f7fd6"/>
+    <path d="M0 48 a7 7 0 0 0 0 -7 a7 7 0 0 1 0 14Z M96 48 a7 7 0 0 1 0 -7 a7 7 0 0 0 0 14Z" fill="#4f7fd6"/>
+  </g>
+  <rect x="0.5" y="0.5" width="95" height="95" fill="none" stroke="#c9d5ee" stroke-width="1"/>
+</svg>
