@@ -137,6 +137,24 @@ h1 { font-family: var(--display); font-weight: 700; font-size: 2.5rem; line-heig
 .segbtn.want[aria-pressed="true"] { background: var(--want-soft); border-color: var(--want); color: var(--want); }
 .segbtn.been[aria-pressed="true"] { background: var(--been-soft); border-color: var(--been); color: var(--been); }
 
+/* Restaurant name search */
+.namesearch { position: relative; color: var(--fg); }
+.namesearch-field { position: relative; }
+.namesearch-field input { padding-right: 38px; }
+.spinner { position: absolute; right: 12px; top: 50%; width: 16px; height: 16px; margin-top: -8px; border: 2px solid var(--line); border-top-color: var(--accent); border-radius: 50%; animation: spin .7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .spinner { animation-duration: 2s; } }
+.suggest { position: absolute; left: 0; right: 0; top: calc(100% + 4px); z-index: 15; background: var(--surface); border: 2px solid var(--accent); border-radius: 10px; box-shadow: 0 10px 28px rgba(15, 42, 102, .18); overflow: hidden; }
+.suggest ul { list-style: none; margin: 0; padding: 4px 0; max-height: 300px; overflow-y: auto; }
+.suggest li { display: flex; flex-direction: column; padding: 8px 12px; cursor: pointer; }
+.suggest li[aria-selected="true"] { background: var(--accent-soft); }
+.s-name { font-weight: 700; color: var(--accent); font-size: .98rem; }
+.s-detail { color: var(--muted); font-size: .82rem; overflow-wrap: anywhere; }
+.s-empty { margin: 0; padding: 12px; color: var(--muted); font-size: .9rem; }
+.s-foot { margin: 0; padding: 6px 12px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; font-size: .75rem; color: var(--muted); background: var(--bg); }
+.s-attrib { margin-left: auto; }
+.s-msg { margin: 6px 0 0; font-size: .82rem; color: var(--muted); }
+
 .toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--fg); color: var(--bg); padding: 9px 16px; border-radius: 10px; font-size: .9rem; z-index: 20; max-width: calc(100% - 32px); }
 
 @media (max-width: 480px) {

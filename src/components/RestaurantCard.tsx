@@ -11,7 +11,7 @@ type Props = {
 };
 
 const mapsUrl = (r: Restaurant) =>
-  "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent([r.name, r.area, r.town, "Portugal"].filter(Boolean).join(", "));
+  r.mapsUrl || "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent([r.name, r.area, r.town, "Portugal"].filter(Boolean).join(", "));
 
 export function RestaurantCard({ r, onEdit, onMove, onRemove }: Props) {
   const [editing, setEditing] = useState(false);

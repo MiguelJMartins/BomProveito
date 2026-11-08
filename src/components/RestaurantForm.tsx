@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
-import type { ListStatus, RestaurantInput } from "@/lib/types";
+import type { ListStatus, PlaceDetails, RestaurantInput } from "@/lib/types";
+import { NameSearch } from "./NameSearch";
 
 const TOWNS = ["Lisboa", "Porto", "Braga", "Coimbra", "Faro", "Aveiro", "Évora", "Sintra", "Cascais", "Matosinhos", "Guimarães", "Funchal"];
 const TYPES = ["Tasca", "Marisqueira", "Churrasqueira", "Petiscos", "Pastelaria", "Café", "Cervejaria", "Francesinha", "Pizza", "Sushi", "Vegetarian", "Fine dining"];
@@ -32,7 +33,27 @@ export function RestaurantForm({ initial, defaultStatus, submitLabel, onSave, on
     >
       <label className="full">
         Restaurant name
-        <input id={`${idp}-name`} required maxLength={80} autoFocus value={v.name} onChange={(e) => set("name", e.target.value)} placeholder="e.g. Tasca do Chico" />
+        {editing ? (
+          <input id={`${idp}-name`} required maxLength={80} autoFocus value={v.name} onChange={(e) => set("name", e.target.value)} placeholder="e.g. Tasca do Chico" />
+        ) : (
+          <NameSearch
+            id={`${idp}-name`}
+            value={v.name}
+            onChange={(name) => setV((p) => ({ ...p, name, placeId: undefined, mapsUrl: undefined }))}
+            onPick={(d: PlaceDetails) =>
+              setV((p) => ({
+                ...p,
+                name: d.name || p.name,
+                town: d.town || p.town,
+                area: d.area,
+                cuisine: d.cuisine || p.cuisine,
+                price: d.price || p.price,
+                placeId: d.placeId,
+                mapsUrl: d.mapsUrl || undefined,
+              }))
+            }
+          />
+        )}
       </label>
       <label>
         Town
